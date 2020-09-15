@@ -18,15 +18,20 @@ service: ipstack-lambda
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
-frameworkVersion: '2'
+frameworkVersion: "2"
 
 provider:
   name: aws
   runtime: nodejs12.x
 
-# you can overwrite defaults here
-#  stage: dev
+  # you can overwrite defaults here
+  stage: ${opt:stage, 'dev'}
 #  region: us-east-1
+
+custom:
+  dotenv:
+    path: ./environments
+    logging: false
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -45,8 +50,10 @@ provider:
 #            - "/*"
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment:
+    ENVIRONMENT: ${opt:stage, 'dev'}
+    IP_STACK_API_KEY: ${file(environments/.env.${self:custom.environment.ENVIRONMENT}.yml):IP_STACK_API_KEY}
+    IP_STACK_BASE_URL: ${file(environments/.env.${self:custom.environment.ENVIRONMENT}.yml):IP_STACK_BASE_URL}
 
 # you can add packaging information here
 #package:
@@ -58,12 +65,16 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
-
+  get:
+    handler: handler.get
+    events:
+    - http:
+        cors: true
+        method: get
+        path: /
+    environment:
+      IP_STACK_API_KEY: ${self:custom.environment.IP_STACK_API_KEY}
+      IP_STACK_BASE_URL: ${self:custom.environment.IP_STACK_BASE_URL}
 # you can add CloudFormation resource templates here
 #resources:
 #  Resources:
@@ -75,3 +86,6 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+
+plugins:
+  - serverless-offline

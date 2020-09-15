@@ -1,18 +1,23 @@
-'use strict';
+const fetch = require('node-fetch');
 
-module.exports.hello = async event => {
+
+module.exports.get = async (event) => {
+  const sourceIp= event.requestContext.identity.sourceIp;
+  console.log(`Source IP: ${sourceIp}`)
+  const ipStackUrl = `${process.env.IP_STACK_BASE_URL}/${sourceIp}?access_key=${process.env.IP_STACK_API_KEY}`;
+  const resp = await (await fetch(ipStackUrl)).json();
+  console.log({resp});
+
+
   return {
     statusCode: 200,
     body: JSON.stringify(
       {
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
+        ip: sourceIp,
+        country: resp.country_name,
       },
       null,
       2
     ),
   };
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
 };
