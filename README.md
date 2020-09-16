@@ -15,7 +15,13 @@ IP_STACK_BASE_URL: http://api.ipstack.com/
 
 ## Deploy
 
-`npm run deploy.dev`
+- `npm run deploy.dev`
+
+## Test
+
+- `npm run start.local`
+
+- `npm run test`
 
 ## Usage
 
