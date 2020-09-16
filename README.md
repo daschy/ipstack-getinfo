@@ -28,9 +28,9 @@ IP_STACK_BASE_URL: http://api.ipstack.com/
 
 - move handler implementation in a function in order to make it mode testable
 
-- validate params at api gateway level
+- validate params at Api Gateway level
 
-- handling secrets using ssm
+- handling secrets using System Manager Parameter Store
 
 - improve logging
 
