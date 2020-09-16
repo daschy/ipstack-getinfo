@@ -19,7 +19,7 @@ IP_STACK_BASE_URL: http://api.ipstack.com/
 
 ## Usage
 
-[GET] /dev?operation=getInfo (ex: `https://2i68s8ve65.execute-api.us-east-1.amazonaws.com/dev/?operation=getInfo`)
+[GET] /dev?operation=getInfo (ex: `https://2i68s8ve65.execute-api.us-east-1.amazonaws.com/dev?operation=getInfo`)
 
 
 ## Improvements
