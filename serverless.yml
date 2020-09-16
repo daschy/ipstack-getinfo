@@ -23,69 +23,38 @@ frameworkVersion: "2"
 provider:
   name: aws
   runtime: nodejs12.x
-
-  # you can overwrite defaults here
   stage: ${opt:stage, 'dev'}
 #  region: us-east-1
 
 custom:
-  dotenv:
-    path: ./environments
-    logging: false
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
   environment:
     ENVIRONMENT: ${opt:stage, 'dev'}
-    IP_STACK_API_KEY: ${file(environments/.env.${self:custom.environment.ENVIRONMENT}.yml):IP_STACK_API_KEY}
+    IP_STACK_ACCESS_KEY: ${file(environments/.env.${self:custom.environment.ENVIRONMENT}.yml):IP_STACK_ACCESS_KEY}
     IP_STACK_BASE_URL: ${file(environments/.env.${self:custom.environment.ENVIRONMENT}.yml):IP_STACK_BASE_URL}
 
 # you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
+package:
+  individually: true
+  exclude:
+    - .gitignore
+    - README.md
+    - package.json
+    - package-lock.json
+    - environments/**
+    - node_modules/**/aws-sdk/**
 
 functions:
   get:
     handler: handler.get
     events:
-    - http:
-        cors: true
-        method: get
-        path: /
+      - http:
+          method: get
+          path: /
     environment:
-      IP_STACK_API_KEY: ${self:custom.environment.IP_STACK_API_KEY}
+      IP_STACK_ACCESS_KEY: ${self:custom.environment.IP_STACK_ACCESS_KEY}
       IP_STACK_BASE_URL: ${self:custom.environment.IP_STACK_BASE_URL}
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+      PARAM_OPERATION_NAME: "operation"
+      PARAM_OPERATION_VALUE: "getInfo"
 
 plugins:
   - serverless-offline
